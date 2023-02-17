@@ -8,6 +8,8 @@ import "./App.css";
 import AuthVerify from "./common/AuthVerify";
 import EventBus from "./common/EventBus";
 
+
+
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
@@ -57,6 +59,7 @@ const App = () => {
   }, [currentUser, logOut]);
 
   return (
+    
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <Link to={"/"} className="navbar-brand">
@@ -138,6 +141,7 @@ const App = () => {
       </div>
           <AuthVerify logOut={logOut}/>
     </div>
+    
   );
 };
 
