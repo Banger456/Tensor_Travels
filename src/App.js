@@ -63,7 +63,7 @@ const App = () => {
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <Link to={"/"} className="navbar-brand">
-          <img src="logo-image" class="img-fluid"></img>
+          Tensor Travels
         </Link>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
