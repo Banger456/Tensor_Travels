@@ -70,10 +70,6 @@ label {
   border-radius: 50%;
 }
 
-.navbar-brand{
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-top: -6px;
+body {
+  background-color: #000a95af;
 }

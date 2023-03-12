@@ -98,7 +98,7 @@ const Register = () => {
     <div className="col-md-12">
       <div className="card card-container">
         <img
-          src="logo-image.png"
+          src="https://i.imgur.com/AEwRGg1.png"
           alt="profile-img"
           className="profile-img-card"
         />
