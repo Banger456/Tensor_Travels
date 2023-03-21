@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PhotoUpload from "./PhotoUpload";
 
 import UserService from "../services/user.service";
 import EventBus from "../common/EventBus";
@@ -32,6 +33,7 @@ const BoardUser = () => {
     <div className="container">
       <header className="jumbotron">
         <h3>user:{content}</h3>
+        <PhotoUpload />
       </header>
     </div>
   );
