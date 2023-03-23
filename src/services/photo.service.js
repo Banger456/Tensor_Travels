@@ -17,8 +17,8 @@ const upload = (file, category) => {
   });
 };
 
-const vote = (id) => {
-  return axios.put(API_URL + "photos/" + id + "/vote", {}, { headers: authHeader() });
+const vote = (photoId) => {
+  return axios.put(API_URL + "vote/" + photoId, {}, { headers: authHeader() });
 };
 
 const getPhotos = () => {

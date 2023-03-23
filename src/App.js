@@ -17,6 +17,7 @@ import Profile from "./components/Profile";
 import BoardUser from "./components/BoardUser";
 import BoardModerator from "./components/BoardModerator";
 import BoardAdmin from "./components/BoardAdmin";
+import ContestView from "./components/ContestView";
 
 import { logout } from "./actions/auth";
 import { clearMessage } from "./actions/message";
@@ -97,16 +98,8 @@ const App = () => {
             </li>
           )}
 
-          {currentUser && (
-            <li className="nav-item">
-              <Link to="/photo-list" className="nav-link">
-                View Contest
-              </Link>
-            </li>
-            )}
-        </div>
-
-          
+         <ContestView /> 
+         </div>
         {currentUser ? (
           <div className="navbar-nav ml-auto">
             <li className="nav-item">
