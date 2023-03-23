@@ -2,8 +2,8 @@
 import { SET_MESSAGE } from './types';
 import PhotoService from '../services/photo.service';
 
-export const uploadPhoto = (file) => (dispatch) => {
-  return PhotoService.upload(file).then(
+export const uploadPhoto = (file, category) => (dispatch) => {
+  return PhotoService.upload(file, category).then(
     (response) => {
       dispatch({
         type: SET_MESSAGE,
