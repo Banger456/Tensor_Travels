@@ -20,6 +20,7 @@ import BoardAdmin from "./components/BoardAdmin";
 
 import { logout } from "./actions/auth";
 import { clearMessage } from "./actions/message";
+import PhotoList from "./components/PhotoList";
 
 const App = () => {
   const [showModeratorBoard, setShowModeratorBoard] = useState(false);
@@ -95,8 +96,17 @@ const App = () => {
               </Link>
             </li>
           )}
+
+          {currentUser && (
+            <li className="nav-item">
+              <Link to="/photo-list" className="nav-link">
+                View Contest
+              </Link>
+            </li>
+            )}
         </div>
 
+          
         {currentUser ? (
           <div className="navbar-nav ml-auto">
             <li className="nav-item">
@@ -134,6 +144,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/photo-list" element={<PhotoList />} />
           <Route path="/user" element={<BoardUser />} />
           <Route path="/mod" element={<BoardModerator />} />
           <Route path="/admin" element={<BoardAdmin />} />

@@ -11,7 +11,7 @@ const PhotoUpload = () => {
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
-    dispatch(uploadPhoto(file, user.id));
+    dispatch(uploadPhoto(file));
   }, [dispatch, user.id]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });

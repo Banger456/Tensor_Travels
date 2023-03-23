@@ -73,3 +73,16 @@ label {
 body {
   background-color: #000a95af;
 }
+
+.navbar {
+  padding: 0.5rem 1rem;
+}
+
+.nav-link {
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: rgba(255, 255, 255, 0.8);
+}

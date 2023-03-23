@@ -27,4 +27,5 @@ const getPhotos = () => {
 export default {
   upload,
   vote,
+  getPhotos,
 };
