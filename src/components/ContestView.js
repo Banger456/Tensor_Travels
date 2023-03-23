@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPhotos } from "../actions/photo";
+import { vote } from "../actions/Photo";
 
 const groupPhotosByCategory = (photos) => {
     const groupedPhotos = {};
