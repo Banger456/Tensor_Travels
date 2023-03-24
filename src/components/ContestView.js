@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPhotos } from "../actions/photo";
+import { getPhotos } from "../actions/Photo";
 import { vote } from "../actions/Photo";
 
 const groupPhotosByCategory = (photos) => {
@@ -22,7 +22,12 @@ const ContestView = () => {
 
     useEffect(() => {
       dispatch(getPhotos()).then((response) => {
-        setPhotos(groupPhotosByCategory(response.data));
+        console.log(response);
+        if (response.data) {
+            setPhotos(groupPhotosByCategory(response.data));
+          } else {
+            console.error("No data received from the server");
+          }
       });
     }, [dispatch]);
 

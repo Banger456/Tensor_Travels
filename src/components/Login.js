@@ -18,8 +18,8 @@ const required = (value) => {
   }
 };
 
-const Login = (props) => {
-  let navigate = useNavigate();
+const Login = () => {
+  const navigate = useNavigate();
 
   const form = useRef();
   const checkBtn = useRef();

@@ -2,7 +2,7 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-const API_URL = 'http://localhost:8080/api/photos/';
+const API_URL = 'http://localhost:8080/api/';
 
 const upload = (file, category) => {
   let formData = new FormData();
@@ -22,10 +22,12 @@ const vote = (photoId) => {
 };
 
 const getPhotos = () => {
-  return axios.get(API_URL + "photos/files");
+  return axios.get(API_URL + "photos/get-photos", { headers: authHeader() });
 }
-export default {
+
+const photoService = {
   upload,
   vote,
   getPhotos,
 };
+export default photoService;

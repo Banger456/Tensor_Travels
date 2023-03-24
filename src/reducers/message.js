@@ -1,18 +1,22 @@
-import { SET_MESSAGE, CLEAR_MESSAGE } from "../actions/types";
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {};
+const initialState = {
+  message: '',
+};
 
-export default function (state = initialState, action) {
-  const { type, payload } = action;
+const messageSlice = createSlice({
+  name: 'message',
+  initialState,
+  reducers: {
+    setMessage: (state, action) => {
+      state.message = action.payload;
+    },
+    clearMessage: (state) => {
+      state.message = '';
+    },
+  },
+});
 
-  switch (type) {
-    case SET_MESSAGE:
-      return { message: payload };
+export const { setMessage, clearMessage } = messageSlice.actions;
 
-    case CLEAR_MESSAGE:
-      return { message: "" };
-
-    default:
-      return state;
-  }
-}
+export default messageSlice.reducer;

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
@@ -60,6 +61,7 @@ const Register = () => {
 
   const { message } = useSelector(state => state.message);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onChangeUsername = (e) => {
     const username = e.target.value;
@@ -87,6 +89,8 @@ const Register = () => {
       dispatch(register(username, email, password))
         .then(() => {
           setSuccessful(true);
+          navigate('/login');
+          window.location.reload();
         })
         .catch(() => {
           setSuccessful(false);

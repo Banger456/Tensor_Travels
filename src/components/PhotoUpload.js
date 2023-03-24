@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
-import { uploadPhoto } from '../actions/photo';
+import { uploadPhoto } from '../actions/Photo';
 
 
 const PhotoUpload = () => {
@@ -12,7 +12,7 @@ const PhotoUpload = () => {
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
-    dispatch(uploadPhoto(file));
+    dispatch(uploadPhoto(file, user.id));
   }, [dispatch, user.id]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });

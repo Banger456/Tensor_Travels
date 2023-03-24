@@ -32,8 +32,10 @@ const BoardUser = () => {
   return (
     <div className="container">
       <header className="jumbotron">
-        <h3>user:{content}</h3>
-        <PhotoUpload />
+        <h3>{content}</h3>
+        <PhotoUpload>
+        
+        </PhotoUpload>
       </header>
     </div>
   );

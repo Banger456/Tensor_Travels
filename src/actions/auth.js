@@ -77,7 +77,7 @@ import {
     );
   };
   
-  export const logout = () => (dispatch) => {
+  export const logOut = () => (dispatch) => {
     AuthService.logout();
   
     dispatch({
