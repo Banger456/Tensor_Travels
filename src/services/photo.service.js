@@ -9,7 +9,7 @@ const upload = (file, category) => {
   formData.append('file', file);
   formData.append('category', category);
 
-  return axios.post(API_URL + 'upload', formData, {
+  return axios.post(API_URL + '/photos/upload', formData, {
     headers: {
       ...authHeader(),
       'Content-Type': 'multipart/form-data',

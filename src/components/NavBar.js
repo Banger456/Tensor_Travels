@@ -1,13 +1,22 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { logOut } from '../actions/auth';
 
-const NavigationBar = ({ logOut }) => {
+const NavigationBar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user: currentUser } = useSelector((state) => state.auth);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const isAdmin = currentUser && currentUser.roles.includes("ROLE_ADMIN");
   const isUser = currentUser && currentUser.roles.includes("ROLE_USER");
+
+  const handleLogout = () => {
+    dispatch(logOut());
+  };
+   
 
   return (
     <Navbar bg="light" expand="lg">
@@ -39,7 +48,7 @@ const NavigationBar = ({ logOut }) => {
                 Profile
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={logOut}>
+              <NavDropdown.Item>
                 Log Out
               </NavDropdown.Item>
             </NavDropdown>

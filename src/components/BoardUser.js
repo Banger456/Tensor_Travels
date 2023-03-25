@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import PhotoUpload from "./PhotoUpload";
+import { Navigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
 
 import UserService from "../services/user.service";
 import EventBus from "../common/EventBus";
 
 const BoardUser = () => {
   const [content, setContent] = useState("");
+  const { user: currentUser } = useSelector((state) => state.auth);
 
-  useEffect(() => {
+  useEffect((currentUser) => {
     UserService.getUserBoard().then(
       (response) => {
         setContent(response.data);
@@ -21,13 +24,16 @@ const BoardUser = () => {
           error.toString();
 
         setContent(_content);
-
         if(error.response && error.response.status === 401) {
             EventBus.dispatch("logout");
         }
       }
     );
   }, []);
+
+  if (!currentUser) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div className="container">

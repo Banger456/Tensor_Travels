@@ -1,34 +1,60 @@
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import axios from "axios";
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { uploadPhoto } from '../actions/Photo';
 
+//const [selectedCategory, setSelectedCategory] = useState("");
+
+
 
 const PhotoUpload = () => {
     const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const { message } = useSelector((state) => state.message);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const { message } = useSelector((state) => state.message);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await axios.get("/api/get-categories");
+          setCategories(response.data);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+
+      fetchCategories();
+    }, []);
+
+    const handleCategoryChange = (e) => {
+      setSelectedCategory(e.target.value);
+    };
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
+    if (!selectedCategory) {
+      alert("Please select a category before uploading the photo.");
+      return;
+    }
     dispatch(uploadPhoto(file, user.id));
-  }, [dispatch, user.id]);
+  }, [selectedCategory, dispatch, user.id]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-  };
+
   return (
     <div>
       <div>
         {/* ... */}
         <select value={selectedCategory} onChange={handleCategoryChange}>
           <option value="">Select a category</option>
-          <option value="category1">Category 1</option>
-          <option value="category2">Category 2</option>
-          <option value="category3">Category 3</option>
+          {categories.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
         </select>
         {/* ... */}
       </div>

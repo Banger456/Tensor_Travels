@@ -1,7 +1,3 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, useLocation } from "react-router-dom";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import EventBus from "./common/EventBus";
@@ -21,11 +17,20 @@ import { logOut } from "./actions/auth";
 import { clearMessage } from "./actions/message";
 import ContestView from "./components/ContestView";
 
+const React = require("react");
+const { useState, useEffect, useCallback } = React;
+const { useDispatch, useSelector } = require("react-redux");
+const { Routes, Route, useLocation, useNavigate } = require("react-router-dom");
+
+
+
 const App = () => {
   const [showModeratorBoard, setShowModeratorBoard] = useState(false);
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const { user: currentUser } = useSelector((state) => state.auth);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   let location = useLocation();
 
@@ -55,7 +60,7 @@ const App = () => {
     return () => {
       EventBus.remove("logout");
     };
-  }, [currentUser, logOutuser]);
+  }, [currentUser, logOutuser, navigate]);
 
   return (
     
