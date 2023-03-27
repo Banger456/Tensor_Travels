@@ -48,7 +48,7 @@ const NavigationBar = () => {
                 Profile
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item>
+              <NavDropdown.Item onClick={handleLogout}>
                 Log Out
               </NavDropdown.Item>
             </NavDropdown>

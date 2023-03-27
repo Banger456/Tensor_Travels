@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPhotos } from "../actions/Photo";
 import { vote } from "../actions/Photo";
+import Footer from './Footer';
+import "./ContestView.css";
 
 const groupPhotosByCategory = (photos) => {
     const groupedPhotos = {};
@@ -23,8 +25,8 @@ const ContestView = () => {
     useEffect(() => {
       dispatch(getPhotos()).then((response) => {
         console.log(response);
-        if (response.data) {
-            setPhotos(groupPhotosByCategory(response.data));
+        if (response) {
+            setPhotos(groupPhotosByCategory(response));
           } else {
             console.error("No data received from the server");
           }
@@ -35,7 +37,7 @@ const ContestView = () => {
         dispatch(vote(photoId)).then(() => {
             // Refresh the photos after voting
             dispatch(getPhotos()).then((response) => {
-                setPhotos(groupPhotosByCategory(response.data));
+                setPhotos(groupPhotosByCategory(response));
             });
         });
     };
@@ -46,41 +48,46 @@ const ContestView = () => {
     }
   
     return (
-        
-        <div className="container">
-            <h1>Contest View</h1>
-            {Object.keys(photos).map((category) => (
-                <div key={category}>
-                    <h2>{category}</h2>
-                    <div className="row">
-                    {photos[category].map((photo) => (
-                        <div className="col-md-4" key={photo._id}>
-                            <div className="card">
-                                <img src={photo.url} alt={photo.fileName} className="card-img-top" />
-                                <div className="card-body">
-                                    <h5 className="card-title">{photo.fileName}</h5>
-                                    <p className="card-text">Votes: {photo.votes}</p>
-                                    {isLoggedIn && (
-                                        <>
-                                            <button className="btn btn-primary mr-2" onClick={() => handleVote(photo._id)}>
-                                                Vote
-                                            </button>
-                                            <button className="btn btn-danger" onClick={() => handleReport(photo._id)}>
-                                                Report
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                    </div>
+    <div className="container">
+      {Object.keys(photos).map((category) => (
+        <div key={category} className="category-box">
+          <h2>{category}</h2>
+          <div className="row">
+            <div className="photo-container">
+              {photos[category].map((photo) => (
+                <div className="photo-card" key={photo._id}>
+                  <img src={photo.url} alt={photo.fileName} />
+                  <div className="photo-info">
+                    <h5>{photo.fileName}</h5>
+                    <p>Votes: {photo.votes}</p>
+                    {isLoggedIn && (
+                      <>
+                        <button
+                          className="btn btn-primary mr-2"
+                          onClick={() => handleVote(photo._id)}
+                        >
+                          Vote
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleReport(photo._id)}
+                        >
+                          Report
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
-            ))}
+              ))}
+            </div>
+          </div>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
-          
-          
-  
+
 export default ContestView;
+
+          
+        

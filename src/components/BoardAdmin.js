@@ -5,6 +5,7 @@ import EventBus from "../common/EventBus";
 
 import AddCategory from "./AddCategory";
 import UserService from "../services/user.service";
+import Footer from './Footer';
 
 const BoardUser = () => {
   const [content, setContent] = useState("");
@@ -41,6 +42,7 @@ const BoardUser = () => {
         <h3>Admin:{content}</h3>
         <AddCategory />
       </header>
+      <Footer />
     </div>
   );
 };

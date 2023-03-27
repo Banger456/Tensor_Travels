@@ -6,7 +6,6 @@ import CategoryService from "../services/category.service";
 const AddCategory = () => {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
-  const dispatch = useDispatch();
 
   const handleAddCategory = (e) => {
     e.preventDefault();

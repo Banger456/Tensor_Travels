@@ -5,12 +5,13 @@ import { useSelector } from "react-redux";
 
 import UserService from "../services/user.service";
 import EventBus from "../common/EventBus";
+import Footer from './Footer';
 
 const BoardUser = () => {
   const [content, setContent] = useState("");
   const { user: currentUser } = useSelector((state) => state.auth);
 
-  useEffect((currentUser) => {
+  useEffect(() => {
     UserService.getUserBoard().then(
       (response) => {
         setContent(response.data);
@@ -43,6 +44,7 @@ const BoardUser = () => {
         
         </PhotoUpload>
       </header>
+      <Footer />
     </div>
   );
 };

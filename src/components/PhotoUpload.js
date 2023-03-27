@@ -39,8 +39,8 @@ const PhotoUpload = () => {
       alert("Please select a category before uploading the photo.");
       return;
     }
-    dispatch(uploadPhoto(file, user.id));
-  }, [selectedCategory, dispatch, user.id]);
+    dispatch(uploadPhoto(file, selectedCategory));
+  }, [selectedCategory, dispatch]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
