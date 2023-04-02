@@ -71,3 +71,59 @@ export const vote = (photoId) => (dispatch) => {
     }
   );
 };
+
+export const deletePhoto = (photoId) => (dispatch) => {
+  return PhotoService.deletePhoto(photoId).then(
+    () => {
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Photo deleted successfully!",
+      });
+
+      return Promise.resolve();
+    },
+    (error) => {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      dispatch({
+        type: SET_MESSAGE,
+        payload: message,
+      });
+
+      return Promise.reject();
+    }
+  );
+};
+
+export const approvePhoto = (photoId) => (dispatch) => {
+  return PhotoService.approvePhoto(photoId).then(
+    () => {
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Photo approved successfully!",
+      });
+
+      return Promise.resolve();
+    },
+    (error) => {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      dispatch({
+        type: SET_MESSAGE,
+        payload: message,
+      });
+
+      return Promise.reject();
+    }
+  );
+};
