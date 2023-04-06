@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { logOut } from '../actions/auth';
+import "./NavBar.css";
+import { AccountCircle } from "@material-ui/icons";
 
 const NavigationBar = () => {
   const dispatch = useDispatch();
@@ -16,10 +18,9 @@ const NavigationBar = () => {
   const handleLogout = () => {
     dispatch(logOut());
   };
-   
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar className="navbar" bg="transparent" variant="dark" expand="lg">
       <Navbar.Brand as={Link} to="/">
         Tensor Travels
       </Navbar.Brand>
@@ -42,8 +43,19 @@ const NavigationBar = () => {
           <Nav.Link as={Link} to="/contest-view">
             Contest View
           </Nav.Link>
+        </Nav>
+        <Nav className="ml-auto">
           {currentUser && (
-            <NavDropdown title={currentUser.username} id="basic-nav-dropdown">
+            <NavDropdown
+              alignRight
+              title={
+                <>
+                  <AccountCircle />
+                  <span className="ml-2">{currentUser.username}</span>
+                </>
+              }
+              id="basic-nav-dropdown"
+            >
               <NavDropdown.Item as={Link} to="/profile">
                 Profile
               </NavDropdown.Item>
@@ -59,7 +71,7 @@ const NavigationBar = () => {
                 Login
               </Nav.Link>
               <Nav.Link as={Link} to="/register">
-                Register
+                Sign Up
               </Nav.Link>
             </>
           )}

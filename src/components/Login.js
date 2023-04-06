@@ -1,13 +1,16 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate  } from 'react-router-dom';
-//importing following to be able to user "react-validation"
+import { Navigate, useNavigate, Link } from "react-router-dom";
+import { Box, Button, Card, CardContent, CircularProgress, TextField, Typography, InputAdornment } from "@mui/material";
+import { styled } from "@mui/system";
+import { login } from "../actions/auth";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import Footer from "./Footer";
 
-import { login } from "../actions/auth";
-//verifying username & password field as required field.
 const required = (value) => {
   if (!value) {
     return (
@@ -17,6 +20,25 @@ const required = (value) => {
     );
   }
 };
+
+const ImageWrapper = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: theme.spacing(2),
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  maxWidth: 400,
+  margin: "auto",
+  padding: theme.spacing(3),
+  borderRadius: theme.spacing(2),
+  boxShadow: theme.shadows[3],
+  backgroundColor: "rgba(255,255,255,0.2)",
+  [theme.breakpoints.down("xs")]: {
+    padding: theme.spacing(2),
+  },
+}));
 
 const Login = () => {
   const navigate = useNavigate();
@@ -63,66 +85,115 @@ const Login = () => {
       setLoading(false);
     }
   };
-// by checking isLoggedIn we can redirect user to profile page.
+
   if (isLoggedIn) {
     return <Navigate to="/profile" />;
   }
 
   return (
-    <div className="col-md-12">
-      <div className="card card-container">
-        <img
-          src="https://i.imgur.com/AEwRGg1.png"
-          alt="profile-img"
-          className="profile-img-card"
-        />
-
-        <Form onSubmit={handleLogin} ref={form}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <Input
-              type="text"
-              className="form-control"
-              name="username"
-              value={username}
-              onChange={onChangeUsername}
-              validations={[required]}
+    <>
+    <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", '& .MuiTextField-root': { m: 1.5, width: '30ch' }, }}>
+      <StyledCard>
+        <CardContent>
+          <ImageWrapper>
+            <img
+              src="https://i.imgur.com/AEwRGg1.png"
+              alt="profile-img"
+              style={{ width: "50%" }}
             />
-          </div>
+          </ImageWrapper>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <Input
-              type="password"
-              className="form-control"
-              name="password"
-              value={password}
-              onChange={onChangePassword}
-              validations={[required]}
-            />
-          </div>
+          <Typography variant="h5" gutterBottom style={{ textAlign: 'center' }}>
+            LOGIN
+          </Typography>
 
-          <div className="form-group">
-            <button className="btn btn-primary btn-block" disabled={loading}>
-              {loading && (
-                <span className="spinner-border spinner-border-sm"></span>
-              )}
-              <span>Login</span>
-            </button>
-          </div>
+          <Form onSubmit={handleLogin} ref={form}>
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                required
+                label="Username"
+                variant="outlined"
+                value={username}
+                onChange={onChangeUsername}
+                validations={[required]}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <AccountCircleRoundedIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
 
-          {message && (
-            <div className="form-group">
-              <div className="alert alert-danger" role="alert">
-                {message}
-              </div>
+            <Box mb={2}>
+              <TextField
+                fullWidth
+                required
+                type="password"
+                label="Password"
+                variant="outlined"
+                value={password}
+                onChange={onChangePassword}
+                validations={[required]}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <LockRoundedIcon/>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+            
+            <Box mb={2}>
+          <Button
+            fullWidth
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            style={{ borderRadius: "20px"}}
+          >
+            {loading && (
+              <CircularProgress
+                size={24}
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  marginTop: -12,
+                  marginLeft: -12,
+                }}
+              />
+            )}
+            Login
+          </Button>
+        </Box>
+
+        {message && (
+          <Box mb={2}>
+            <div className="alert alert-danger" role="alert">
+              {message}
             </div>
-          )}
-          <CheckButton style={{ display: "none" }} ref={checkBtn} />
-        </Form>
-      </div>
-    </div>
-  );
+          </Box>
+        )}
+        <Typography variant="body2" align="center">
+          Don't have an account? {" "}
+          <Link to="/register">Sign Up</Link>
+        </Typography>
+
+        <CheckButton style={{ display: "none" }} ref={checkBtn} />
+      </Form>
+    </CardContent>
+  </StyledCard>
+</Box>
+<Footer />
+</>
+
+);
 };
 
 export default Login;
+           

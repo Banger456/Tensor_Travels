@@ -1,18 +1,62 @@
 import React, { useState, useEffect } from "react";
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import EventBus from "../common/EventBus";
+import { Carousel } from "react-bootstrap";
+import { Button, IconButton, Card, CardContent, Modal, Grid } from "@mui/material";
+import { Delete, CheckCircle, Add } from "@mui/icons-material";
+import { makeStyles } from "@material-ui/core/styles";
+import { styled } from "@mui/system";
 
 import AddCategory from "./AddCategory";
 import UserService from "../services/user.service";
-import Footer from './Footer';
+import Footer from "./Footer";
 import { getPhotos, deletePhoto, approvePhoto } from "../actions/Photo";
 import { setMessage } from "../actions/message";
 
+const StyledCard = styled(Card)(({ theme }) => ({
+  marginBottom: "20px",
+  borderRadius: "20px",
+  overflow: "hidden",
+  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
+  background: "rgba(0, 0, 0, 0.5)",
+}));
+
+const useStyles = makeStyles(() => ({
+  carousel: {
+    width: "100%",
+    height: "400px",
+    borderRadius: "20px",
+    overflow: "hidden",
+  },
+  carouselImg: {
+    display: "block",  
+    maxWidth :"100%",
+    maxHeight: "400px",
+    margin: "auto",
+    objectFit: "contain",
+    borderRadius: "20px",
+  },
+  carauselControl: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  addCategoryCard: {
+    width: "100%",
+    borderRadius: "20px",
+    overflow: "hidden",
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
+    bacground: "rgba(0,0,0,0.5)",
+    padding: "20px",
+  }
+}));
+
 const BoardUser = () => {
+  const classes = useStyles();
   const [content, setContent] = useState("");
   const { user: currentUser } = useSelector((state) => state.auth);
   const [photos, setPhotos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const dispatch = useDispatch();
 
@@ -28,32 +72,23 @@ const BoardUser = () => {
       .catch(() => {
         setPhotos([]);
       });
-
-    /*UserService.getAdminBoard().then(
-      (response) => {
-        setContent(response.data);
-      },
-      (error) => {
-        const _content =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-
-        setContent(_content);
-        if(error.response && error.response.status === 401) {
-          EventBus.dispatch("logout");
-      }
-      }
-    );*/
   }, [dispatch, currentUser]);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  
+
 
   const handleDelete = (photoId) => {
     dispatch(deletePhoto(photoId))
       .then(() => {
         setPhotos(photos.filter((photo) => photo._id !== photoId));
-        dispatch(setMessage("Photo deleted successfully" ));
+        dispatch(setMessage("Photo deleted successfully"));
       })
       .catch((error) => {
         console.error("Error deleting photo:", error);
@@ -64,53 +99,68 @@ const BoardUser = () => {
     dispatch(approvePhoto(photoId))
       .then(() => {
         setPhotos(
-          photos.map((photo) => 
+          photos.map((photo) =>
             photo._id === photoId ? { ...photo, approved: true } : photo
-            )
+          )
         );
-          dispatch(setMessage("Photo approved successfully." ));
+        dispatch(setMessage("Photo approved successfully."));
       })
       .catch((error) => {
         console.error("Error approving photo:", error);
       });
   };
 
-
   return (
     <div className="container">
-      <header className="jumbotron">
-        <h3>Admin:{content}</h3>
-        <AddCategory />
-      </header>
-    
-      <div className="row">
-        {photos.map((photo) => (
-          <div className="col-md-4" key={photo._id}>
-            <div className="card mb-4">
-              <img src={photo.url} alt={photo.fileName} className="card-img-top" />
-              <div className="card-body">
-                <h5 className="card-title">{photo.fileName}</h5>
-                <p>Votes: {photo.votes}</p>
-                <p>Approved: {photo.approved ? "Yes" : "No"}</p>
-                <button
-                  className="btn btn-danger mr-2"
-                  onClick={() => handleDelete(photo._id)}
-                >
-                  Delete
-                </button>
-                {!photo.approved && (
-                  <button
-                    className="btn btn-success"
-                    onClick={() => handleApprove(photo._id)}
-                  >
-                    Approve
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <StyledCard>
+            <CardContent>
+              <Carousel>
+                {photos.map((photo) => (
+                  <Carousel.Item key={photo._id}>
+                    <img src={photo.url} alt={photo.fileName} className={classes.carouselImg} />
+                    <Carousel.Caption>
+                      <h5>{photo.fileName}</h5>
+                      <p>Votes: {photo.votes}</p>
+                      <p>Approved: {photo.approved ? "Yes" : "No"}</p>
+                      <IconButton color="error" onClick={() => handleDelete(photo._id)}>
+                        <Delete />
+                      </IconButton>
+                      {!photo.approved && (
+                        <IconButton color="success" onClick={() => handleApprove(photo._id)}>
+                          <CheckCircle />
+                        </IconButton>
+                      )}
+                    </Carousel.Caption>
+                  </Carousel.Item>
+                ))}
+              </Carousel>
+              </CardContent>
+          </StyledCard>
+          </Grid>
+          <Grid item xs={12} md={8}></Grid>
+          <Grid item xs={12} md={4}>
+            <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenModal}
+            startIcon={<Add />}
+            >
+            Add Category
+          </Button>
+          <Modal
+            open={isModalOpen}
+            onClose={handleCloseModal}
+          >
+            <StyledCard className={classes.addCategoryCard}>
+              <CardContent>
+                <AddCategory />
+              </CardContent>
+            </StyledCard>
+          </Modal>
+        </Grid>
+      </Grid>
       <Footer />
     </div>
   );

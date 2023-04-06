@@ -13,5 +13,8 @@ code {
 }
 
 body {
-  background-color: #000a95af;
+  background-image: url('./assets/bg_TT.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
