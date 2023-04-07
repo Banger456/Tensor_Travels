@@ -74,15 +74,20 @@ body {
   background-color: #121212;
 }
 
-.navbar {
-  padding: 0.5rem 1rem;
+.fade-enter {
+  opacity: 0;
 }
 
-.nav-link {
-  font-size: 1.1rem;
-  transition: color 0.2s;
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms;
 }
 
-.nav-link:hover {
-  color: rgba(255, 255, 255, 0.8);
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 500ms;
 }

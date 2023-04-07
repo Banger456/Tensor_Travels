@@ -19,11 +19,36 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    h5: {
+    h1: {
+      fontSize: "2.5rem",
       fontWeight: 600,
+      lineHeight: 1.2,
+    },
+    h2: {
+      fontSize: "2rem",
+      fontWeight: 500,
+      lineHeight: 1.3,
+    },
+    h4: {
+      fontSize: "1.5rem",
+      fontWeight: 400,
+      lineHeight: 1.4,
+    },
+    h5: {
+      fontSize: "1.2rem",
+      fontWeight: 300,
+      lineHeight: 1.5,
     },
   },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "transparent",
+          boxShadow: "none",
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         containedPrimary: {

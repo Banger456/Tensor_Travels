@@ -3,8 +3,8 @@ import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import EventBus from "../common/EventBus";
 import { Carousel } from "react-bootstrap";
-import { Button, IconButton, Card, CardContent, Modal, Grid } from "@mui/material";
-import { Delete, CheckCircle, Add } from "@mui/icons-material";
+import { Button, IconButton, Card, CardContent, Modal, Grid, Box } from "@mui/material";
+import { Delete, CheckCircle, Add, Close } from "@mui/icons-material";
 import { makeStyles } from "@material-ui/core/styles";
 import { styled } from "@mui/system";
 
@@ -19,7 +19,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: "20px",
   overflow: "hidden",
   boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
-  background: "rgba(0, 0, 0, 0.5)",
+  background: "rgba(255, 255, 255, 0.1)",
 }));
 
 const useStyles = makeStyles(() => ({
@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: "20px",
     overflow: "hidden",
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
-    bacground: "rgba(0,0,0,0.5)",
+    background: "rgba(255,255,255,0.5)",
     padding: "20px",
   }
 }));
@@ -152,12 +152,36 @@ const BoardUser = () => {
           <Modal
             open={isModalOpen}
             onClose={handleCloseModal}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
           >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: "rgba(0,0,0,0.6)",
+                boxShadow: 24,
+                p: 3,
+                borderRadius: 5,
+              }}
+            >
             <StyledCard className={classes.addCategoryCard}>
               <CardContent>
+              <IconButton
+                    edge="end"
+                    color="inherit"
+                    onClick={handleCloseModal}
+                    aria-label="close"
+                    sx={{ position: 'absolute', top: 8, right: 8 }}
+                  >
+                    <Close />
+                  </IconButton>
                 <AddCategory />
               </CardContent>
             </StyledCard>
+            </Box>
           </Modal>
         </Grid>
       </Grid>

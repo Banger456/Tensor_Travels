@@ -1,9 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import EventBus from "./common/EventBus";
-
-
-
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -13,6 +11,7 @@ import BoardUser from "./components/BoardUser";
 import BoardModerator from "./components/BoardModerator";
 import BoardAdmin from "./components/BoardAdmin";
 import NavigationBar from "./components/NavBar";
+import LoadingIndicator from "./components/LoadingIndicator";
 
 import { logOut } from "./actions/auth";
 import { clearMessage } from "./actions/message";
@@ -23,11 +22,10 @@ const { useState, useEffect, useCallback } = React;
 const { useDispatch, useSelector } = require("react-redux");
 const { Routes, Route, useLocation, useNavigate } = require("react-router-dom");
 
-
-
 const App = () => {
   const [showModeratorBoard, setShowModeratorBoard] = useState(false);
   const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user: currentUser } = useSelector((state) => state.auth);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
@@ -44,6 +42,14 @@ const App = () => {
   const logOutuser = useCallback(() => {
     dispatch(logOut());
   }, [dispatch]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [location]);
 
   useEffect(() => {
     if (currentUser) {
@@ -64,29 +70,30 @@ const App = () => {
   }, [currentUser, logOutuser, navigate]);
 
   return (
-    
-      <div>
-        <NavigationBar logOut={logOutuser} />
+    <div>
+      <NavigationBar logOut={logOutuser} />
 
-        <div className="container mt-3">
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/contest-view" element={<ContestView />} />
-            <Route path="/user" element={<BoardUser />} />
-            <Route path="/mod" element={<BoardModerator />} />
-            <Route path="/admin" element={<BoardAdmin />} />
-          </Routes>
-        </div>
+      <div className="container mt-3">
+        <TransitionGroup>
+          <CSSTransition key={location.key} classNames="fade" timeout={500}>
+            <Routes location={location}>
+              <Route exact path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/contest-view" element={<ContestView />} />
+              <Route path="/user" element={<BoardUser />} />
+              <Route path="/mod" element={<BoardModerator />} />
+              <Route path="/admin" element={<BoardAdmin />} />
+            </Routes>
+          </CSSTransition>
+        </TransitionGroup>
       </div>
-    
+
+      {isLoading && <LoadingIndicator />}
+    </div>
   );
 };
-
-
-
 
 export default App;

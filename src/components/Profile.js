@@ -47,7 +47,7 @@ const Profile = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Card sx={{
-            backgroundColor: "rgba(0,0,0,0.5)", 
+            backgroundColor: "rgba(255,255,255,0.1)", 
             color:"#eceff1",
             borderRadius: 4
             }}>
@@ -84,7 +84,7 @@ const Profile = () => {
         <Grid item xs={12} md={6}>
           <Card 
             sx={{
-              backgroundColor: "rgba(0,0,0,0.5)",
+              backgroundColor: "rgba(255,255,255,0.1)",
               color: "#eceff1",
               borderRadius: 4,
               textAlign: 'right',
