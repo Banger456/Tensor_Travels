@@ -25,6 +25,18 @@ const getPhotos = () => {
   return axios.get(API_URL + "photos/get-photos", { headers: authHeader() });
 }
 
+const getUserPhotos = () => {
+  return axios.get(API_URL + "photos/get-user-photos", { headers: authHeader() })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+};
+
+
 const deletePhoto = (photoId) => {
   return axios.delete(API_URL + `photos/${photoId}`, { headers: authHeader() });
 };
@@ -39,5 +51,6 @@ const photoService = {
   getPhotos,
   deletePhoto,
   approvePhoto,
+  getUserPhotos,
 };
 export default photoService;

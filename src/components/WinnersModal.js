@@ -21,7 +21,11 @@ const useStyles = makeStyles((theme) => ({
     height: 'auto',
     objectFit: 'contain',
     maxHeight: 'calc(100vh - 210px)',
+    borderRadius: "20px",
   },
+  heading: {
+    color: 'white',
+  }
 }));
 
 
@@ -73,14 +77,16 @@ const WinnersModal = ({ open, handleClose, winners }) => {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             width: '80%',
-            bgcolor: 'background.paper',
+            background: 'rgba(0,0,0,0.4)',
             boxShadow: 24,
             p: 4,
-            borderRadius: 2,
+            borderRadius: "20px",
             textAlign: 'center',
+
           }}
+
         >
-          <Typography id="winners-modal-title" variant="h6" component="h2">
+          <Typography id="winners-modal-title" variant="h6" component="h2" className={classes.heading}>
             Contest Winners
           </Typography>
           <Carousel interval={null}>

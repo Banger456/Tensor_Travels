@@ -7,7 +7,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { getPhotos } from "../actions/Photo";
+import { getUserPhotos } from "../actions/Photo";
 import Footer from "./Footer"; 
+import photoService from "../services/photo.service";
 
 const groupPhotosByCategory = (photos) => {
   const groupedPhotos = {};
@@ -27,14 +29,16 @@ const Profile = () => {
   const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
-    dispatch(getPhotos(currentUser._id)).then((response) => {
-      console.log(response);
-      if (response) {
-          setPhotos(groupPhotosByCategory(response));
-        } else {
-          console.error("No data received from the server");
-        }
-    });
+    if (currentUser) {
+      dispatch(getUserPhotos()).then((response) => {
+        console.log(response);
+        if (response) {
+            setPhotos(groupPhotosByCategory(response));
+          } else {
+            console.error("No data received from the server");
+          }
+      });
+    }
   }, [dispatch, currentUser]);
 
   if (!currentUser) {
@@ -103,15 +107,14 @@ const Profile = () => {
               <Typography variant="body2" color="#cfd8dc">
                 <strong>Email:</strong> {currentUser.email}
               </Typography>
-              
             </CardContent>
           </Card>
         </Grid>
       </Grid>
     </div>
-    <Footer />
-    </>
-  );
+  <Footer />
+  </>
+);
 };
 
 export default Profile;

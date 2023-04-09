@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   modalContent: {
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     borderRadius: "20px",
   },
   closeButton: {

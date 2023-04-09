@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   formField: {
     marginBottom: theme.spacing(2),
   },
+  heading: {
+    color: 'white',
+  }
 }));
 
 const AddCategory = () => {
@@ -50,7 +53,7 @@ const AddCategory = () => {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" align="center">
+      <Typography variant="h4" align="center" className={classes.heading}>
         Add New Category
       </Typography>
       <Box component="form" onSubmit={handleAddCategory} className={classes.formContainer}>

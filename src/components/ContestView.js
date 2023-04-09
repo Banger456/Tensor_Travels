@@ -14,16 +14,19 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 
 const groupPhotosByCategory = (photos) => {
-    const groupedPhotos = {};
+  const groupedPhotos = {};
 
-    photos.forEach((photo) => {
-        if (!groupedPhotos[photo.category.name]){
-            groupedPhotos[photo.category.name] = [];
-        }
-        groupedPhotos[photo.category.name].push(photo);
-    });
-    return groupedPhotos;
+  photos.forEach((photo) => {
+      if (photo.approved) { // Check if the photo is approved
+          if (!groupedPhotos[photo.category.name]){
+              groupedPhotos[photo.category.name] = [];
+          }
+          groupedPhotos[photo.category.name].push(photo);
+      }
+  });
+  return groupedPhotos;
 };
+
 
 const findWinners = (photos) => {
   const categoryWinners = {};
