@@ -3,8 +3,8 @@ import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import EventBus from "../common/EventBus";
 import { Carousel } from "react-bootstrap";
-import { Button, IconButton, Card, CardContent, Modal, Grid, Box } from "@mui/material";
-import { Delete, CheckCircle, Add, Close } from "@mui/icons-material";
+import { Button, IconButton, Card, CardContent, Modal, Grid, Box, Typography } from "@material-ui/core";
+import { Delete, CheckCircle, Add, Close, Event } from "@mui/icons-material";
 import { makeStyles } from "@material-ui/core/styles";
 import { styled } from "@mui/system";
 
@@ -13,6 +13,8 @@ import UserService from "../services/user.service";
 import Footer from "./Footer";
 import { getPhotos, deletePhoto, approvePhoto } from "../actions/Photo";
 import { setMessage } from "../actions/message";
+import ContestDatesForm from "./ContestDatesForm";
+
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: "20px",
@@ -47,6 +49,24 @@ const useStyles = makeStyles(() => ({
     boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
     background: "rgba(255,255,255,0.5)",
     padding: "20px",
+  },
+  adminFunctionsPanel: {
+    width: "100%",
+    borderRadius: "20px",
+    overflow: "hidden",
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.3)",
+    background: "rgba(255, 255, 255, 0.1)",
+    marginBottom: "20px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-end",
+  },
+  adminFunctionsButton: {
+    marginRight: "10px",
+    marginTop: "10px",
+  },
+  adminFunctionsHeading: {
+    color: "white",
   }
 }));
 
@@ -56,7 +76,7 @@ const BoardUser = () => {
   const { user: currentUser } = useSelector((state) => state.auth);
   const [photos, setPhotos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isContestDatesModalOpen, setIsContestDatesModalOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -82,8 +102,14 @@ const BoardUser = () => {
     setIsModalOpen(false);
   };
   
-
-
+  const handleOpenContestDatesModal = () => {
+    setIsContestDatesModalOpen(true);
+  };
+  
+  const handleCloseContestDatesModal = () => {
+    setIsContestDatesModalOpen(false);
+  };
+  
   const handleDelete = (photoId) => {
     dispatch(deletePhoto(photoId))
       .then(() => {
@@ -120,74 +146,128 @@ const BoardUser = () => {
                 {photos.map((photo) => (
                   <Carousel.Item key={photo._id}>
                     <img src={photo.url} alt={photo.fileName} className={classes.carouselImg} />
-                    <Carousel.Caption>
-                      <h5>{photo.fileName}</h5>
-                      <p>Votes: {photo.votes}</p>
-                      <p>Approved: {photo.approved ? "Yes" : "No"}</p>
-                      <IconButton color="error" onClick={() => handleDelete(photo._id)}>
-                        <Delete />
-                      </IconButton>
-                      {!photo.approved && (
-                        <IconButton color="success" onClick={() => handleApprove(photo._id)}>
-                          <CheckCircle />
-                        </IconButton>
-                      )}
-                    </Carousel.Caption>
-                  </Carousel.Item>
-                ))}
-              </Carousel>
-              </CardContent>
-          </StyledCard>
-          </Grid>
-          <Grid item xs={12} md={8}></Grid>
-          <Grid item xs={12} md={4}>
-            <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenModal}
-            startIcon={<Add />}
-            >
-            Add Category
-          </Button>
-          <Modal
-            open={isModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-          >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                background: "rgba(0,0,0,0.6)",
-                boxShadow: 24,
-                p: 3,
-                borderRadius: 5,
-              }}
-            >
-            <StyledCard className={classes.addCategoryCard}>
-              <CardContent>
-              <IconButton
-                    edge="end"
-                    color="inherit"
-                    onClick={handleCloseModal}
-                    aria-label="close"
-                    sx={{ position: 'absolute', top: 8, right: 8 }}
-                  >
-                    <Close />
+                <Carousel.Caption>
+                  <h5>{photo.fileName}</h5>
+                  <p>Votes: {photo.votes}</p>
+                  <p>Approved: {photo.approved ? "Yes" : "No"}</p>
+                  <IconButton color="error" onClick={() => handleDelete(photo._id)}>
+                    <Delete color="error"/>
                   </IconButton>
-                <AddCategory />
-              </CardContent>
-            </StyledCard>
-            </Box>
-          </Modal>
-        </Grid>
-      </Grid>
-      <Footer />
-    </div>
-  );
+                  {!photo.approved && (
+                    <IconButton color="success" onClick={() => handleApprove(photo._id)}>
+                      <CheckCircle />
+                    </IconButton>
+                  )}
+                </Carousel.Caption>
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        </CardContent>
+      </StyledCard>
+    </Grid>
+    <Grid container  justifyContent="flex-end">
+    <Grid item xs={12} md={4}>
+      <Card className={classes.adminFunctionsPanel}>
+        <CardContent>
+        <Typography variant="h5" gutterBottom className={classes.adminFunctionsHeading}>
+          Admin Functions
+        </Typography>
+          <Grid container justifyContent="flex-start">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenModal}
+              startIcon={<Add />}
+              className={classes.adminFunctionsButton}   
+            >
+              Add Category
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenContestDatesModal}
+              startIcon={<Event />}
+              className={classes.adminFunctionsButton}
+            >
+              Set Contest Dates
+            </Button>
+          </Grid>
+        </CardContent>
+      </Card>
+    </Grid>
+    </Grid>
+    <Footer />
+  </Grid>
+  <Modal
+    open={isModalOpen}
+    onClose={handleCloseModal}
+    aria-labelledby="modal-title"
+    aria-describedby="modal-description"
+  >
+    <Box
+      sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        background: "rgba(0,0,0,0.6)",
+        boxShadow: 24,
+        p: 3,
+        borderRadius: 5,
+      }}
+    >
+      <StyledCard className={classes.addCategoryCard}>
+        <CardContent>
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={handleCloseModal}
+            aria-label="close"
+            sx={{ position: 'absolute', top: 8, right: 8 }}
+          >
+            <Close />
+          </IconButton>
+          <AddCategory />
+        </CardContent>
+      </StyledCard>
+    </Box>
+  </Modal>
+  <Modal
+    open={isContestDatesModalOpen}
+    onClose={handleCloseContestDatesModal}
+    aria-labelledby="contest-dates-modal-title"
+    aria-describedby="contest-dates-modal-description"
+  >
+    <Box
+      sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        background:  "rgba(0,0,0,0.6)",
+        boxShadow: 24,
+        p: 3,
+        borderRadius: 5,
+      }}
+    >
+      <StyledCard className={classes.addCategoryCard}>
+        <CardContent>
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={handleCloseContestDatesModal}
+            aria-label="close"
+            sx={{ position: 'absolute', top: 8, right: 8 }}
+          >
+            <Close />
+          </IconButton>
+          <ContestDatesForm />
+        </CardContent>
+      </StyledCard>
+    </Box>
+  </Modal>
+</div>
+);
 };
 
 export default BoardUser;

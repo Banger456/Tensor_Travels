@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getPhotos } from "../actions/Photo";
 import { vote } from "../actions/Photo";
+import WinnersModal from './WinnersModal';
 import { Carousel } from "react-bootstrap";
 import { makeStyles, styled, useTheme } from "@material-ui/core/styles";
 import Footer from './Footer';
 import { Container, Typography, Card, Button, Grid, Paper, Box, IconButton, Tooltip } from "@material-ui/core";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import FlagIcon from "@material-ui/icons/Flag";
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 const groupPhotosByCategory = (photos) => {
     const groupedPhotos = {};
@@ -19,6 +23,31 @@ const groupPhotosByCategory = (photos) => {
         groupedPhotos[photo.category.name].push(photo);
     });
     return groupedPhotos;
+};
+
+const findWinners = (photos) => {
+  const categoryWinners = {};
+  const overallTop3 = [{ votes: -1 }, { votes: -1 }, { votes: -1 }];
+
+  for (const category in photos) {
+    let maxVotes = -1;
+
+    for (const photo of photos[category]) {
+      if (photo.votes > maxVotes) {
+        maxVotes = photo.votes;
+        categoryWinners[category] = photo;
+      }
+
+      const minTop3Votes = Math.min(...overallTop3.map((p) => p.votes));
+      if (photo.votes > minTop3Votes) {
+        const indexToUpdate = overallTop3.findIndex((p) => p.votes === minTop3Votes);
+        overallTop3[indexToUpdate] = photo;
+        overallTop3.sort((a, b) => b.votes - a.votes);
+      }
+    }
+  }
+
+  return { overallTop3, categoryWinners };
 };
 
 const CategoryHeading = styled(Typography)(({ theme }) => ({
@@ -90,13 +119,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ContestView = () => {
-    const [photos, setPhotos] = useState([]);
-    const dispatch = useDispatch();
-    const { isLoggedIn } = useSelector((state) => state.auth);
+  const [photos, setPhotos] = useState([]);
+  const [contestEndDate, setContestEndDate] = useState(null);
+  const [contestOver, setContestOver] = useState(false);
+  const [winners, setWinners] = useState(null);
+  const dispatch = useDispatch();
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const [winnersModalOpen, setWinnersModalOpen] = useState(false);
 
     useEffect(() => {
       dispatch(getPhotos()).then((response) => {
-        console.log(response);
+        console.log("Response:", response);
         if (response) {
             setPhotos(groupPhotosByCategory(response));
           } else {
@@ -104,6 +137,42 @@ const ContestView = () => {
           }
       });
     }, [dispatch]);
+
+    useEffect(() => {
+      console.log("useEffect for winners:", { contestOver, photos }); // Add this log
+    
+      if (contestOver && photos) {
+        const { categoryWinners, overallTop3 } = findWinners(photos);
+        setWinners({ overallTop3, categoryWinners });
+      } else {
+        console.log("Not calling findWinners due to conditions:", { contestOver, photos }); // Add this log
+      }
+    }, [contestOver, photos]);
+
+    useEffect(() => {
+      const fetchContestDates = async () => {
+        try {
+          const response = await axios.get("/api/contest/get-contest-dates");
+          setContestEndDate(new Date(response.data.endDate));
+          setContestOver(new Date() > new Date(response.data.endDate));
+        } catch (error) {
+          console.error("Error fetching contest dates:", error);
+          setContestOver(true); // Set contestOver to true in case of an error
+        }
+      };
+    
+      fetchContestDates();
+    }, []);
+    
+    useEffect(() => {
+      if (contestEndDate && contestEndDate instanceof Date) {
+        const now = new Date();
+        setContestOver(now > contestEndDate);
+      }
+    }, [contestEndDate]);
+    
+
+
 
     const handleVote = (photoId) => {
         dispatch(vote(photoId)).then(() => {
@@ -118,6 +187,7 @@ const ContestView = () => {
     // Handle report action here
     console.log("Report photo with ID:", photoId);
     }
+
     const theme = useTheme();
     const classes = useStyles();
     
@@ -127,6 +197,23 @@ const ContestView = () => {
       <Typography variant="h4" component="h1" gutterBottom className={classes.heading}>
         Discover Amazing Submissions
       </Typography>
+      {contestOver && winners && (
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setWinnersModalOpen(true)}
+              sx={{ mb: 2 }}
+            >
+              Show Contest Winners
+            </Button>
+            <WinnersModal
+              open={winnersModalOpen}
+              handleClose={() => setWinnersModalOpen(false)}
+              winners={winners}
+            />
+          </>
+        )}
       <Grid container spacing={4}>
       {Object.keys(photos).map((category) => (
         <Grid item xs={12} key={category}>
@@ -163,6 +250,7 @@ const ContestView = () => {
                               color="primary"
                               onClick={() => handleVote(photo._id)}
                               className={classes.iconButton}
+                              disabled={contestOver}
                             >
                               <ThumbUpIcon />
                             </IconButton>
@@ -173,6 +261,7 @@ const ContestView = () => {
                               color="secondary"
                               onClick={() => handleReport(photo._id)}
                               className={classes.iconButton}
+                              disabled={contestOver}
                             >
                               <FlagIcon />
                             </IconButton>

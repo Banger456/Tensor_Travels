@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useSelector } from "react-redux";
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Container, Grid, Typography, Modal, IconButton } from '@material-ui/core';
 import PhotoUpload from "./PhotoUpload";
@@ -49,6 +50,10 @@ const BoardUser = () => {
   const [content, setContent] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
+  const [contestOver, setContestOver] = useState(false);
+  const [contestStartDate, setContestStartDate] = useState(null);
+  const [contestEndDate, setContestEndDate] = useState(null);
+
   useEffect(() => {
     UserService.getUserBoard().then(
       (response) => {
@@ -69,6 +74,29 @@ const BoardUser = () => {
       }
     );
   }, []);
+
+  useEffect(() => {
+    const fetchContestDates = async () => {
+      try {
+        const response = await axios.get("/api/contest/get-contest-dates");
+        setContestStartDate(new Date(response.data.startDate));
+        setContestEndDate(new Date(response.data.endDate));
+      } catch (error) {
+        console.error("Error fetching contest dates:", error);
+      }
+    };
+
+    fetchContestDates();
+  }, []);
+
+  useEffect(() => {
+    const now = new Date();
+
+    if (contestEndDate && now >= contestEndDate) {
+      setContestOver(true);
+    }
+  }, [contestEndDate]);
+  
 
   const handleUploadButtonClick = () => {
     setOpenModal(true);
@@ -104,10 +132,19 @@ const BoardUser = () => {
               color="primary"
               className={classes.uploadButton}
               onClick={handleUploadButtonClick}
+              disabled={contestOver}
             >
               Upload Photo
             </Button>
           </header>
+          {contestOver && (
+              <Typography variant="body1" align="center" gutterBottom>
+                The contest is over.{" "}
+                <Link to="/contest-view">
+                  Click here to view the winner and other submissions.
+                </Link>
+              </Typography>
+            )}
         </Grid>
       </Grid>
       <Modal
