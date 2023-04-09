@@ -12,9 +12,11 @@ import {
   Badge,
   Box,
   Popover,
+  Drawer,
+  Hidden,
 } from "@material-ui/core";
 import { styled } from "@mui/system";
-import { AccountCircle, Notifications } from "@mui/icons-material";
+import { AccountCircle, Notifications, Menu } from "@mui/icons-material";
 import { Avatar, Paper } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -76,15 +78,62 @@ const NavigationBar = () => {
     setAnchorEl(null);
   };
 
+  const drawer = (
+    <div>
+      <MenuList style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
+        <MenuItem component={Link} to="/contest-view">
+          BEST KLIX
+        </MenuItem>
+        {isUser && (
+          <MenuItem component={Link} to="/user">
+            User Dashboard
+          </MenuItem>
+        )}
+        {isAdmin && (
+          <MenuItem component={Link} to="/admin">
+            Admin Dashboard
+          </MenuItem>
+        )}
+        {currentUser && (
+          <>
+            <MenuItem component={Link} to="/profile">
+              Profile
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+          </>
+        )}
+        {!currentUser && (
+          <>
+            <MenuItem component={Link} to="/login">
+              Login
+            </MenuItem>
+            <MenuItem component={Link} to="/register">
+              Sign Up
+            </MenuItem>
+          </>
+        )}
+      </MenuList>
+    </div>
+  );
+
   return (
     <>
-      <AppBar
-        position="static" style={{ backgroundColor: "transparent", boxShadow: "none" }}>
-      
+      <AppBar position="static" className={classes.transparentAppBar}>
         <Toolbar>
+          <Hidden smUp>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={() => setAnchorEl((prev) => !prev)}
+            >
+              <Menu />
+            </IconButton>
+          </Hidden>
           <Typography variant="h6" component={NavLink} to="/" noWrap>
             Tensor Travels
           </Typography>
+          <Hidden xsDown>
           <Box sx={{ flexGrow: 1, justifyContent: "center" }} display="flex">
             <NavLink to="/contest-view">BEST KLIX</NavLink>
           </Box>
@@ -150,8 +199,52 @@ const NavigationBar = () => {
               </>
             )}
           </Box>
-        </Toolbar>
-        </AppBar>
+        </Hidden>
+      </Toolbar>
+    </AppBar>
+    <nav>
+        <Hidden smUp>
+          <Drawer
+            anchor="left"
+            open={Boolean(anchorEl)}
+            onClose={() => setAnchorEl(null)}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            PaperProps={{
+              style: {
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+              },
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown>
+        <Popover
+                  open={open}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  style={{ backgroundColor: "transparent", boxShadow: "none" }}
+                  disableScrollLock
+                >
+                  <MenuList style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
+                    <MenuItem component={Link} to="/profile" onClick={handleClose}>
+                      Profile
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+                  </MenuList>
+                </Popover>
+                </Hidden>
+      </nav>
 </>
 );
 };
