@@ -144,3 +144,75 @@ export const approvePhoto = (photoId) => (dispatch) => {
     }
   );
 };
+
+export const reportPhoto = (photoId) => (dispatch) => {
+  return PhotoService.report(photoId).then(
+    (response) => {
+      dispatch({
+        type: SET_MESSAGE,
+        payload: response.data.message,
+      });
+
+      return Promise.resolve();
+    },
+    (error) => {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      dispatch({
+        type: SET_MESSAGE,
+        payload: message,
+      });
+
+      return Promise.reject();
+    }
+  );
+};
+
+export const getReportedPhotos = () => (dispatch) => {
+  return PhotoService.getReportedPhotos().then(
+    (response) => {
+      return Promise.resolve(response.data);
+    },
+    (error) => {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return Promise.reject(message);
+    }
+  );
+};
+
+export const unreportPhoto = (photoId) => (dispatch) => {
+  return PhotoService.unreportPhoto(photoId).then(
+    (response) => {
+      dispatch({
+        type: SET_MESSAGE,
+        payload: response.data.message,
+      });
+
+      return Promise.resolve();
+    },
+    (error) => {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      dispatch({
+        type: SET_MESSAGE,
+        payload: message,
+      });
+
+      return Promise.reject();
+    }
+  );
+};

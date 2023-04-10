@@ -20,3 +20,11 @@ import {
     );
   };
   
+  export const notifyWinners = (winners) => async (dispatch) => {
+    try {
+      await ContestService.notifyWinners(winners);
+    } catch (error) {
+      console.error("Error notifying winners:", error);
+    }
+  };
+  

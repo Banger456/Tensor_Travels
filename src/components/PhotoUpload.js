@@ -39,6 +39,8 @@ const PhotoUpload = () => {
   const dispatch = useDispatch();
   const [filename, setFilename] = useState("");
   const [file, setFile] = useState(null);
+  const [uploadedCategories, setUploadedCategories] = useState(new Set());
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -65,13 +67,17 @@ const PhotoUpload = () => {
     setFile(files[0]);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedCategory) {
       alert("Please select a category before uploading the photo.");
       return;
     }
-    dispatch(uploadPhoto(file, selectedCategory));
+    const result = await dispatch(uploadPhoto(file, selectedCategory));
+    if (result) {
+      setUploadedCategories((prev) => new Set([...prev, selectedCategory]));
+    }
   };
+  
 
   return (
     <Container className={classes.root}>
@@ -107,17 +113,18 @@ const PhotoUpload = () => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <DropzoneArea
-            acceptedFiles={['image/*']}
-            dropzoneText="Drag and drop a photo here"
-            filesLimit={1}
-            maxFileSize={5000000}
-            onChange={handleFileChange}
-            showPreviews={true}
-            showPreviewsInDropzone={false}
-            showAlerts={false}
-            useChipsForPreview
-          />
+        <DropzoneArea
+          acceptedFiles={['image/*']}
+          dropzoneText="Drag and drop a photo here"
+          filesLimit={1}
+          maxFileSize={5000000}
+          onChange={handleFileChange}
+          showPreviews={true}
+          showPreviewsInDropzone={false}
+          showAlerts={false}
+          useChipsForPreview
+          disabled={uploadedCategories.has(selectedCategory)}
+        />
         </Grid>
         <Grid item xs={12} md={6} container spacing={3} justifyContent="center" direction="column" alignItems="center">
           <Grid item>
@@ -137,16 +144,16 @@ const PhotoUpload = () => {
             </Button>
           </Grid>
           <Grid item>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CloudUploadIcon />}
-              className={classes.uploadButton}
-              disabled={!selectedCategory || !file}
-              onClick={handleSubmit}
-            >
-              Upload
-            </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CloudUploadIcon />}
+            className={classes.uploadButton}
+            disabled={!selectedCategory || !file || uploadedCategories.has(selectedCategory)}
+            onClick={handleSubmit}
+          >
+            Upload
+          </Button>
           </Grid>
         </Grid>
       </Grid>

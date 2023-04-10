@@ -45,6 +45,18 @@ const approvePhoto = (photoId) => {
   return axios.put(API_URL + `photos/${photoId}/approve`, {}, { headers: authHeader() });
 };
 
+const report = (photoId) => {
+  return axios.post(API_URL + `photos/${photoId}/report`, {}, { headers: authHeader() });
+};
+
+const getReportedPhotos = () => {
+  return axios.get(API_URL + "photos/reported-photos", { headers: authHeader() });
+};
+
+const unreportPhoto = (photoId) => {
+  return axios.put(`${API_URL}photos/${photoId}/unreport`, {}, { headers: authHeader() });
+};
+
 const photoService = {
   upload,
   vote,
@@ -52,5 +64,8 @@ const photoService = {
   deletePhoto,
   approvePhoto,
   getUserPhotos,
+  report,
+  getReportedPhotos,
+  unreportPhoto,
 };
 export default photoService;

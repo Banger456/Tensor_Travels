@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { getPhotos } from "../actions/Photo";
-import { vote } from "../actions/Photo";
+import { getPhotos, vote, reportPhoto } from "../actions/Photo";
+import { notifyWinners } from "../actions/Contest";
 import WinnersModal from './WinnersModal';
 import { Carousel } from "react-bootstrap";
 import { makeStyles, styled, useTheme } from "@material-ui/core/styles";
@@ -12,6 +12,7 @@ import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import FlagIcon from "@material-ui/icons/Flag";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+
 
 const groupPhotosByCategory = (photos) => {
   const groupedPhotos = {};
@@ -142,8 +143,6 @@ const ContestView = () => {
     }, [dispatch]);
 
     useEffect(() => {
-      console.log("useEffect for winners:", { contestOver, photos }); // Add this log
-    
       if (contestOver && photos) {
         const { categoryWinners, overallTop3 } = findWinners(photos);
         setWinners({ overallTop3, categoryWinners });
@@ -173,23 +172,30 @@ const ContestView = () => {
         setContestOver(now > contestEndDate);
       }
     }, [contestEndDate]);
-    
 
-
+    useEffect(() => {
+      if (contestOver && winners) {
+        dispatch(notifyWinners(winners));
+      }
+    }, [contestOver, winners, dispatch]);
 
     const handleVote = (photoId) => {
-        dispatch(vote(photoId)).then(() => {
-            // Refresh the photos after voting
-            dispatch(getPhotos()).then((response) => {
-                setPhotos(groupPhotosByCategory(response));
-            });
+      dispatch(vote(photoId)).then(() => {
+        // Refresh the photos after voting
+        dispatch(getPhotos()).then((response) => {
+          setPhotos(groupPhotosByCategory(response));
         });
+      });
     };
 
     const handleReport = (photoId) => {
-    // Handle report action here
-    console.log("Report photo with ID:", photoId);
-    }
+      dispatch(reportPhoto(photoId)).then(() => {
+        // Refresh the photos after reporting
+        dispatch(getPhotos()).then((response) => {
+          setPhotos(groupPhotosByCategory(response));
+        });
+      });
+    };
 
     const theme = useTheme();
     const classes = useStyles();
