@@ -90,6 +90,8 @@ const BoardUser = () => {
   const [isContestDatesModalOpen, setIsContestDatesModalOpen] = useState(false);
   const [reportedPhotos, setReportedPhotos] = useState([]);
   const [isReportedPhotosModalOpen, setIsReportedPhotosModalOpen] = useState(false);
+  const [photosKey, setPhotosKey] = useState(0);
+
 
 
 
@@ -149,6 +151,7 @@ const BoardUser = () => {
       .then(() => {
         setPhotos(photos.filter((photo) => photo._id !== photoId));
         dispatch(setMessage("Photo deleted successfully"));
+        setPhotosKey(photosKey + 1);
       })
       .catch((error) => {
         console.error("Error deleting photo:", error);
@@ -192,7 +195,7 @@ const BoardUser = () => {
         <Grid item xs={12}>
           <StyledCard>
             <CardContent>
-              <Carousel>
+              <Carousel key={photosKey}>
                 {photos.map((photo) => (
                   <Carousel.Item key={photo._id}>
                     <img src={photo.url} alt={photo.fileName} className={classes.carouselImg} />

@@ -4,10 +4,11 @@ import authHeader from './auth-header';
 
 const API_URL = 'http://localhost:8080/api/';
 
-const upload = (file, category) => {
+const upload = (file, category, filename) => {
   let formData = new FormData();
   formData.append('file', file);
   formData.append('category', category);
+  formData.append("filename", filename);
 
   return axios.post(API_URL + 'photos/upload', formData, {
     headers: {

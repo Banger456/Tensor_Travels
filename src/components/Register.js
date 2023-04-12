@@ -24,6 +24,10 @@ import CheckButton from "react-validation/build/button";
 //using isEmail from validator to validate email address.
 import { isEmail } from "validator";
 import Footer from "./Footer";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
 
 import { register } from "../actions/auth";
 
@@ -65,10 +69,28 @@ const vusername = (value) => {
 };
 
 const vpassword = (value) => {
-  if (value.length < 6 || value.length > 40) {
-    return "The password must be between 6 and 40 characters.";
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(value);
+  const hasLowerCase = /[a-z]/.test(value);
+  const hasNumber = /\d/.test(value);
+
+  if (value.length < minLength) {
+    return `The password must be at least ${minLength} characters long.`;
+  }
+
+  if (!hasUpperCase) {
+    return "The password must contain at least one uppercase letter.";
+  }
+
+  if (!hasLowerCase) {
+    return "The password must contain at least one lowercase letter.";
+  }
+
+  if (!hasNumber) {
+    return "The password must contain at least one numeric character.";
   }
 };
+
 
 const Register = () => {
   const form = useRef();
@@ -79,10 +101,38 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [successful, setSuccessful] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+
+
+
 
   const { message } = useSelector(state => state.message);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const validateEmail = (value) => {
+    if (!isEmail(value)) {
+      setEmailError("This is not a valid email.");
+    } 
+    if (value[0] && /\d/.test(value[0])) {
+      return "The first character must not be a digit.";
+    } else {
+      setEmailError("");
+    }
+  };
+  
+  const validateConfirmPassword = (value) => {
+    if (value !== password) {
+      setConfirmPasswordError("Passwords do not match.");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+  
 
   const onChangeUsername = (e) => {
     const username = e.target.value;
@@ -92,29 +142,36 @@ const Register = () => {
   const onChangeEmail = (e) => {
     const email = e.target.value;
     setEmail(email);
+    setEmailError("");
   };
+  
 
   const onChangePassword = (e) => {
     const password = e.target.value;
     setPassword(password);
+    setPasswordError(vpassword(password));
   };
+  
 
   const handleTermsCheck = (e) => {
     setTermsChecked(e.target.checked);
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+  
+
   const handleRegister = (e) => {
     e.preventDefault();
-
+  
     setSuccessful(false);
-
-    form.current.validateAll();
-
-    if (checkBtn.current.context._errors.length === 0) {
+  
+    if (!emailError && !confirmPasswordError) {
       dispatch(register(username, email, password))
         .then(() => {
           setSuccessful(true);
-          navigate('/login');
+          navigate("/login");
           window.location.reload();
         })
         .catch(() => {
@@ -122,6 +179,7 @@ const Register = () => {
         });
     }
   };
+  
 
   return (
     <>
@@ -167,29 +225,33 @@ const Register = () => {
 
                 <div className="form-group">
                   
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    label="Email Address"
-                    name="email"
-                    value={email}
-                    onChange={onChangeEmail}
-                    validations={[required, validEmail]}
-                      InputProps={{
-                        endAdornment: (
-                        <InputAdornment position="end">
-                          <EmailRoundedIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{ borderRadius: "20px" }}
-                  />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Email Address"
+                  name="email"
+                  value={email}
+                  onChange={onChangeEmail}
+                  onBlur={() => validateEmail(email)}
+                  error={!!emailError}
+                  helperText={emailError}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <EmailRoundedIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ borderRadius: "20px" }}
+                />
+
                 </div>
 
                 <div className="form-group">
                   
+                  {/* Password field */}
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -197,20 +259,60 @@ const Register = () => {
                     fullWidth
                     label="Password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={onChangePassword}
-                    validations={[required, vpassword]}
+                    error={!!passwordError}
+                    helperText={passwordError}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <LockRoundedIcon/>
+                          <IconButton
+                            edge="end"
+                            onClick={handleClickShowPassword}
+                          >
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                          <LockRoundedIcon />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{ borderRadius: '20px' }}
-                    InputLabelProps={{ position: "center" }}
+                    sx={{ borderRadius: "20px" }}
                   />
+
+                  {/* Confirm Password field */}
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setConfirmPasswordError("");
+                    }}
+                    onBlur={() => validateConfirmPassword(confirmPassword)}
+                    error={!!confirmPasswordError}
+                    helperText={confirmPasswordError}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onClick={handleClickShowPassword}
+                          >
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                          <LockRoundedIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{ borderRadius: "20px" }}
+                  />
+
                 </div>
 
                 <div className="form-group">
