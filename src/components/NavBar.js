@@ -135,7 +135,7 @@ const NavigationBar = () => {
           </Typography>
           <Hidden xsDown>
           <Box sx={{ flexGrow: 1, justifyContent: "center" }} display="flex">
-            <NavLink to="/contest-view">BEST KLIX</NavLink>
+            <NavLink to="/contest-view">BEST KLICK</NavLink>
           </Box>
           <Box>
             {isUser && (

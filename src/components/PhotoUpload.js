@@ -6,6 +6,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, Container, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { DropzoneArea } from 'material-ui-dropzone';
+import { Alert } from '@mui/material'
+import Snackbar from '@mui/material/Snackbar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,7 +42,9 @@ const PhotoUpload = () => {
   const [filename, setFilename] = useState("");
   const [file, setFile] = useState(null);
   const [uploadedCategories, setUploadedCategories] = useState(new Set());
-
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alertSeverity, setAlertSeverity] = useState("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -55,6 +59,16 @@ const PhotoUpload = () => {
     fetchCategories();
   }, []);
 
+  const showAlert = (severity, message) => {
+    setAlertSeverity(severity);
+    setAlertMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+  
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
   };
@@ -65,22 +79,36 @@ const PhotoUpload = () => {
 
   const handleFileChange = (files) => {
     setFile(files[0]);
+    if (files.length > 0) {
+      showAlert("info", `File selected: ${files[0].name}`);
+    }
   };
 
   const handleSubmit = async () => {
     if (!selectedCategory) {
-      alert("Please select a category before uploading the photo.");
+      showAlert("warning", "Please select a category before uploading the photo.");
       return;
     }
-    const result = await dispatch(uploadPhoto(file, selectedCategory));
-    if (result) {
-      setUploadedCategories((prev) => new Set([...prev, selectedCategory]));
+    if (!filename) {
+      showAlert("warning", "Please enter a name for your photo before uploading.");
+      return;
     }
+    await dispatch(uploadPhoto(file, selectedCategory, filename));
+    setUploadedCategories((prev) => new Set([...prev, selectedCategory]));
   };
-  
 
   return (
     <Container className={classes.root}>
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={6000}
+      onClose={handleCloseSnackbar}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
+      <Alert onClose={handleCloseSnackbar} severity={alertSeverity} sx={{ width: '100%' }}>
+      {alertMessage}
+      </Alert>
+    </Snackbar>
       <Typography variant="h4" className={classes.heading}>
         Share Your Amazing Photos!
       </Typography>
@@ -118,7 +146,7 @@ const PhotoUpload = () => {
           dropzoneText="Drag and drop a photo here"
           filesLimit={1}
           maxFileSize={5000000}
-          onChange={handleFileChange}
+          onDrop={handleFileChange}
           showPreviews={true}
           showPreviewsInDropzone={false}
           showAlerts={false}

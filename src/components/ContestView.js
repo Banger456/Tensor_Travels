@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getPhotos, vote, reportPhoto } from "../actions/Photo";
-import { notifyWinners } from "../actions/Contest";
+import { notifyWinners } from "../actions/contest";
 import WinnersModal from './WinnersModal';
 import { Carousel } from "react-bootstrap";
 import { makeStyles, styled, useTheme } from "@material-ui/core/styles";
